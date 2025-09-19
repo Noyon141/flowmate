@@ -1,18 +1,14 @@
+import { ModeToggle } from "@/components/dark-mode/Mode-Toggle";
 import { ThemeProvider } from "@/components/dark-mode/Theme-Provider";
 import { ClerkProvider } from "@clerk/nextjs";
 import { shadcn } from "@clerk/themes";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Lato } from "next/font/google";
 import "./globals.css";
-import { ModeToggle } from "@/components/dark-mode/Mode-Toggle";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const lato = Lato({
+  variable: "--font-lato",
+  weight: ["100", "300", "400", "700", "900"],
   subsets: ["latin"],
 });
 
@@ -61,7 +57,7 @@ export default function RootLayout({
     >
       <html lang="en" suppressHydrationWarning>
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          className={`${lato.variable} antialiased`}
           suppressHydrationWarning
         >
           <ThemeProvider
