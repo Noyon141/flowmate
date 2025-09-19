@@ -1,5 +1,6 @@
 import { ThemeProvider } from "@/components/dark-mode/Theme-Provider";
 import { ClerkProvider } from "@clerk/nextjs";
+import { shadcn } from "@clerk/themes";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -25,7 +26,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      appearance={{
+        theme: shadcn,
+        elements: {
+          cardBox: "p-5",
+        },
+      }}
+    >
       <html lang="en" suppressHydrationWarning>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
