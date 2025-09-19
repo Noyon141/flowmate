@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "pg": "npx prisma generate",
+    "dp": "npx prisma db push",
     "pm": "npx prisma migrate dev"
   },
   "dependencies": {
