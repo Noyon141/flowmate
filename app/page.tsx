@@ -1,4 +1,3 @@
-import { ModeToggle } from "@/components/dark-mode/Mode-Toggle";
 import { Button } from "@/components/ui/button";
 import { auth } from "@clerk/nextjs/server";
 import Image from "next/image";
@@ -13,7 +12,6 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 relative">
-
       <div className="flex items-center justify-center min-h-screen p-2 sm:p-4">
         <div className="w-full max-w-sm sm:max-w-md lg:max-w-6xl mx-auto grid lg:grid-cols-2 gap-4 lg:gap-8 items-center">
           {/* Left side - Hero Content */}
@@ -60,8 +58,8 @@ export default async function HomePage() {
               </span>
             </div>
 
-            <div className="space-y-4 lg:space-y-6 text-center lg:text-left">
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 dark:text-slate-100 leading-tight">
+            <div className="w-full space-y-4 lg:space-y-6 text-center lg:text-left">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 dark:text-slate-100 leading-tight lg:w-3xl">
                 The Future of
                 <span className="block text-blue-600 dark:text-blue-400">
                   AI-Powered Teamwork
@@ -79,7 +77,7 @@ export default async function HomePage() {
               <Link href="/sign-up" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 text-base"
+                  className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 text-base cursor-pointer"
                 >
                   Get Started Free
                 </Button>
@@ -88,7 +86,7 @@ export default async function HomePage() {
                 <Button
                   variant="outline"
                   size="lg"
-                  className="w-full sm:w-auto border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-medium px-6 py-3 text-base"
+                  className="w-full sm:w-auto border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-medium px-6 py-3 text-base cursor-pointer"
                 >
                   Sign In
                 </Button>

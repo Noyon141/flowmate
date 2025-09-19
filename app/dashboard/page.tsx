@@ -1,6 +1,6 @@
 import CreateWorkspaceForm from "@/components/workspaces/CreateWorkspaceForm";
 import { prisma } from "@/lib/prisma";
-import { SignedIn, UserButton } from "@clerk/nextjs";
+import { SignedIn } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 
 export default async function DashboardPage() {
@@ -25,7 +25,6 @@ export default async function DashboardPage() {
           ))}
         </ul>
       </div>
-      <UserButton />
     </SignedIn>
   );
 }
