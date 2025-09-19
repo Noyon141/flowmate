@@ -1,7 +1,7 @@
 import { SignUp } from "@clerk/nextjs";
 import Image from "next/image";
 
-export default function Page() {
+export default function SignupPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 flex items-center justify-center p-2 sm:p-4">
       <div className="w-full max-w-sm sm:max-w-md lg:max-w-6xl mx-auto grid lg:grid-cols-2 gap-4 lg:gap-8 items-center">
@@ -35,9 +35,9 @@ export default function Page() {
                 </span>
               </h1>
               <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
-                Transform your team's productivity with AI-powered automation
-                and intelligent collaboration tools designed for the future of
-                work.
+                Transform your team&apos;s productivity with AI-powered
+                automation and intelligent collaboration tools designed for the
+                future of work.
               </p>
             </div>
           </div>
@@ -134,36 +134,7 @@ export default function Page() {
 
             {/* Clerk Sign Up Component with custom styling */}
             <div className="">
-              <SignUp
-                appearance={{
-                  elements: {
-                    rootBox: "w-full max-w-full",
-                    card: "bg-transparent shadow-none border-none p-0 w-full max-w-full",
-                    headerTitle:
-                      "text-slate-900 dark:text-slate-100 text-lg sm:text-xl font-semibold",
-                    headerSubtitle:
-                      "text-slate-600 dark:text-slate-400 text-sm sm:text-base",
-                    socialButtonsBlockButton:
-                      "bg-slate-50 dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-900 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-600 w-full max-w-full text-sm",
-                    socialButtonsBlockButtonText:
-                      "text-slate-900 dark:text-slate-100 font-medium text-sm",
-                    formFieldInput:
-                      "bg-slate-50 dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-900 dark:text-slate-100 placeholder:text-slate-500 dark:placeholder:text-slate-400 w-full max-w-full text-sm",
-                    formFieldLabel:
-                      "text-slate-700 dark:text-slate-300 font-medium text-sm",
-                    formButtonPrimary:
-                      "bg-blue-600 hover:bg-blue-700 text-white font-medium w-full max-w-full text-sm",
-                    footerActionLink:
-                      "text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300",
-                    identityPreviewText: "text-slate-700 dark:text-slate-300",
-                    formFieldErrorText: "text-red-600 dark:text-red-400",
-                    dividerLine: "bg-slate-200 dark:bg-slate-600",
-                    dividerText: "text-slate-500 dark:text-slate-400",
-                    otpCodeFieldInput:
-                      "bg-slate-50 dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-900 dark:text-slate-100",
-                  },
-                }}
-              />
+              <SignUp />
             </div>
 
             {/* Additional info for mobile */}
