@@ -4,6 +4,7 @@ import { shadcn } from "@clerk/themes";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { ModeToggle } from "@/components/dark-mode/Mode-Toggle";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -68,7 +69,13 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <main className="min-h-screen">{children}</main>
+            <main className="min-h-screen relative">
+              {/* Theme Toggle - Top Right */}
+              <div className="absolute top-4 right-4 z-10">
+                <ModeToggle />
+              </div>
+              {children}
+            </main>
           </ThemeProvider>
         </body>
       </html>
