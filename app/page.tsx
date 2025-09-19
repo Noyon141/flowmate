@@ -1,6 +1,12 @@
+import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const { userId } = await auth();
+  if (userId) {
+    redirect("/dashboard");
+  }
   return (
     <main className="flex flex-col items-center justify-center min-h-screen p-6">
       <h1 className="text-4xl font-bold">Flowmate</h1>
