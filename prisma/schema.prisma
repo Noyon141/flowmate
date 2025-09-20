@@ -16,8 +16,9 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  workspaces Workspace[]
+  workspaces  Workspace[]
   memberships Member[]
+  Task        Task[]
 }
 
 model Workspace {
@@ -27,17 +28,39 @@ model Workspace {
   updatedAt DateTime @updatedAt
 
   ownerId String
-  owner   User   @relation(fields: [ownerId], references: [id])
+  owner   User     @relation(fields: [ownerId], references: [id])
   members Member[]
 
+  Task Task[]
 }
 
 model Member {
-  id          String   @id @default(cuid())
-  role        String   @default("member")
+  id          String @id @default(cuid())
+  role        String @default("member")
   workspaceId String
   userId      String
 
   workspace Workspace @relation(fields: [workspaceId], references: [id])
   user      User      @relation(fields: [userId], references: [id])
+}
+
+model Task {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  status      status    @default(todo)
+  dueDate     DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  assigneeId  String?
+  assignee    User?     @relation(fields: [assigneeId], references: [id])
+}
+
+enum status {
+  todo
+  in_progress
+  done
 }
