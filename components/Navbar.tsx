@@ -134,16 +134,17 @@ const Navbar = () => {
                     </NavigationMenuContent>
                   </>
                 ) : (
-                  <Link href={item.href} legacyBehavior passHref>
-                    <NavigationMenuLink
+                  <NavigationMenuLink asChild>
+                    <Link
+                      href={item.href}
                       className={cn(
                         navigationMenuTriggerStyle(),
                         "text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800"
                       )}
                     >
                       {item.title}
-                    </NavigationMenuLink>
-                  </Link>
+                    </Link>
+                  </NavigationMenuLink>
                 )}
               </NavigationMenuItem>
             ))}
