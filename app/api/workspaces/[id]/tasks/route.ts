@@ -6,13 +6,14 @@ export async function GET(
   req: Request,
   { params }: { params: { id: string } }
 ) {
+  const { id } = await params;
   try {
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     const tasks = await prisma.task.findMany({
-      where: { workspaceId: params.id },
+      where: { workspaceId: id },
       orderBy: { createdAt: "desc" },
     });
 
@@ -31,6 +32,7 @@ export async function POST(
   req: Request,
   { params }: { params: { id: string } }
 ) {
+  const { id } = await params;
   try {
     const { userId } = await auth();
 
@@ -47,11 +49,8 @@ export async function POST(
       status: "todo" | "in_progress" | "done";
     };
 
-    if (!title || !status) {
-      return NextResponse.json(
-        { error: "Title, description, and status are required" },
-        { status: 400 }
-      );
+    if (!title) {
+      return NextResponse.json({ error: "Title is required" }, { status: 400 });
     }
     //Check if the user is a member of the workspace
     const user = await prisma.user.findUnique({
@@ -63,7 +62,7 @@ export async function POST(
     }
 
     const member = await prisma.member.findFirst({
-      where: { userId: user.id, workspaceId: params.id },
+      where: { userId: user.id, workspaceId: id },
     });
 
     if (!member) {
@@ -81,11 +80,9 @@ export async function POST(
         description,
         dueDate: dueDate ? new Date(dueDate) : undefined,
         status: status,
-        workspaceId: params.id,
+        workspaceId: id,
       },
     });
-
-    console.log("Task created:", task);
 
     return NextResponse.json(task, { status: 201 });
   } catch (error) {
