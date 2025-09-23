@@ -31,11 +31,13 @@ export default function TaskForm({ id }: { id: string }) {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder="Task title"
+        className="bg-transparent"
       />
       <Textarea
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         placeholder="Task description"
+        className="bg-transparent"
       />
       <Button type="submit">Add Task</Button>
     </form>
