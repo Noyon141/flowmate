@@ -1,5 +1,6 @@
 import { ModeToggle } from "@/components/dark-mode/Mode-Toggle";
 import { ThemeProvider } from "@/components/dark-mode/Theme-Provider";
+import { Toaster } from "@/components/ui/sonner";
 import { ClerkProvider } from "@clerk/nextjs";
 import { shadcn } from "@clerk/themes";
 import type { Metadata } from "next";
@@ -71,6 +72,7 @@ export default function RootLayout({
                 <ModeToggle />
               </div>
               {children}
+              <Toaster position="top-center" />
             </main>
           </ThemeProvider>
         </body>

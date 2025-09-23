@@ -2,6 +2,7 @@ import CreateWorkspaceForm from "@/components/workspaces/CreateWorkspaceForm";
 import { prisma } from "@/lib/prisma";
 import { SignedIn } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
+import Link from "next/link";
 
 export default async function DashboardPage() {
   const { userId } = await auth();
@@ -20,7 +21,9 @@ export default async function DashboardPage() {
         <ul className="mt-4 space-y-2">
           {user?.workspaces.map((workspace) => (
             <li key={workspace.id} className="border p-3 rounded-md">
-              {workspace.name}
+              <Link href={`/dashboard/workspaces/${workspace.id}`}>
+                {workspace.name}
+              </Link>
             </li>
           ))}
         </ul>

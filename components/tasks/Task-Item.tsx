@@ -3,6 +3,7 @@
 import axios from "axios";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { toast } from "sonner";
 import { Card, CardContent } from "../ui/card";
 import {
   Select,
@@ -24,8 +25,10 @@ export function TaskItem({
   status: string;
 }) {
   const [current, setCurrent] = useState(status);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const updateStatus = async (newStatus: string) => {
+    setIsUpdating(true);
     try {
       const response = await axios.patch(`/api/tasks/${id}`, {
         status: newStatus,
@@ -33,9 +36,24 @@ export function TaskItem({
 
       if (response.status === 200) {
         setCurrent(newStatus);
+        const statusLabels = {
+          todo: "Todo",
+          in_progress: "In Progress",
+          done: "Done",
+        };
+        toast.success("Status updated!", {
+          description: `"${title}" moved to ${
+            statusLabels[newStatus as keyof typeof statusLabels]
+          }.`,
+        });
       }
     } catch (error) {
       console.error("Failed to update status", error);
+      toast.error("Failed to update status", {
+        description: "Please try again later.",
+      });
+    } finally {
+      setIsUpdating(false);
     }
   };
   return (
@@ -59,7 +77,11 @@ export function TaskItem({
               )}
             </div>
             <div className="flex-shrink-0 w-full sm:w-auto">
-              <Select value={current} onValueChange={updateStatus}>
+              <Select
+                value={current}
+                onValueChange={updateStatus}
+                disabled={isUpdating}
+              >
                 <SelectTrigger className="w-full sm:w-[140px] bg-slate-50 dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-900 dark:text-slate-100 focus:ring-blue-500 dark:focus:ring-blue-400">
                   <SelectValue />
                 </SelectTrigger>

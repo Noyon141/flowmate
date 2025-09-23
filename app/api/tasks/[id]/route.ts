@@ -37,7 +37,13 @@ export async function PATCH(
       return NextResponse.json({ error: "Task not found" }, { status: 404 });
     }
 
+    // Trigger both task-specific and workspace-specific events
     await pusherServer.trigger(`task-${id}`, "task-updated", task);
+    await pusherServer.trigger(
+      `workspace-${task.workspaceId}`,
+      "task-updated",
+      task
+    );
 
     return NextResponse.json(task, { status: 200 });
   } catch (error) {
