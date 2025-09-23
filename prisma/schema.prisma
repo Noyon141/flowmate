@@ -18,6 +18,8 @@ model User {
 
   workspaces  Workspace[]
   memberships Member[]
+  comments    Comment[]
+  mentions    Mention[]
   Task        Task[]
 }
 
@@ -57,6 +59,31 @@ model Task {
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
   assigneeId  String?
   assignee    User?     @relation(fields: [assigneeId], references: [id])
+  Comment     Comment[]
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  taskId String
+  task   Task   @relation(fields: [taskId], references: [id])
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id])
+
+  mentions Mention[]
+}
+
+model Mention {
+  id        String @id @default(cuid())
+  userId    String
+  commentId String
+
+  user    User    @relation(fields: [userId], references: [id])
+  comment Comment @relation(fields: [commentId], references: [id])
 }
 
 enum status {
