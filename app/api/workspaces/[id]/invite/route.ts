@@ -4,8 +4,9 @@ import { NextResponse } from "next/server";
 
 export async function POST(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     // Authenticate the user
     const { userId } = await auth();
@@ -26,7 +27,7 @@ export async function POST(
     //Check if the user is the owner of the workspace
 
     const workSpace = await prisma.workspace.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: { owner: true },
     });
 
