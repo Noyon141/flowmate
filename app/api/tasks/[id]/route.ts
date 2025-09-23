@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { pusherServer } from "@/lib/pusher";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
@@ -31,6 +32,12 @@ export async function PATCH(
       where: { id },
       data: { status },
     });
+
+    if (!task) {
+      return NextResponse.json({ error: "Task not found" }, { status: 404 });
+    }
+
+    await pusherServer.trigger(`task-${id}`, "task-updated", task);
 
     return NextResponse.json(task, { status: 200 });
   } catch (error) {
