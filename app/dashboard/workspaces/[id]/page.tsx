@@ -2,7 +2,6 @@ import AiSuggestForm from "@/components/tasks/Ai-Suggest-Form";
 import TaskForm from "@/components/tasks/Task-Form";
 import { TaskList } from "@/components/tasks/Task-List";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { prisma } from "@/lib/prisma";
 
 export default async function WorkspaceDetailPage({
@@ -48,14 +47,10 @@ export default async function WorkspaceDetailPage({
           <CardContent className="pt-0">
             {workspace.Task.length > 0 ? (
               <div className="space-y-3">
-                {workspace.Task.map((task, index) => (
-                  <div key={task.id}>
-                    <TaskList initialTasks={workspace.Task} workspaceId={workspace.id} />
-                    {index < workspace.Task.length - 1 && (
-                      <Separator className="mt-3 bg-slate-200 dark:bg-slate-700" />
-                    )}
-                  </div>
-                ))}
+                <TaskList
+                  initialTasks={workspace.Task}
+                  workspaceId={workspace.id}
+                />
               </div>
             ) : (
               <div className="text-center py-8">
