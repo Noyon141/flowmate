@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
+import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 
 export async function GET(
@@ -83,6 +84,9 @@ export async function POST(
         workspaceId: id,
       },
     });
+
+    // Revalidate the workspace page to show new task immediately
+    revalidatePath(`/dashboard/workspaces/${id}`);
 
     return NextResponse.json(task, { status: 201 });
   } catch (error) {

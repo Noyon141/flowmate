@@ -14,14 +14,19 @@ export default function TaskForm({ id }: { id: string }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await axios.post(`/api/workspaces/${id}/tasks`, {
-      title,
-      description,
-    });
-    if (res.status === 200) {
-      setTitle("");
-      setDescription("");
-      router.refresh();
+    try {
+      const res = await axios.post(`/api/workspaces/${id}/tasks`, {
+        title,
+        description,
+      });
+      if (res.status === 201) {
+        setTitle("");
+        setDescription("");
+        // Force refresh to show the new task immediately
+        router.refresh();
+      }
+    } catch (error) {
+      console.error("Failed to create task:", error);
     }
   };
 
