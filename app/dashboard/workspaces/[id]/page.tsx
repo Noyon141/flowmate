@@ -1,3 +1,4 @@
+import AiSuggestForm from "@/components/tasks/Ai-Suggest-Form";
 import TaskForm from "@/components/tasks/Task-Form";
 import { TaskItem } from "@/components/tasks/Task-Item";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,6 +31,7 @@ export default async function WorkspaceDetailPage({
           </CardHeader>
           <CardContent className="pt-0">
             <TaskForm id={workspace.id} />
+            <AiSuggestForm id={workspace.id} />
           </CardContent>
         </Card>
 
