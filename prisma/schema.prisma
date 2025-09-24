@@ -5,61 +5,103 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  // add shadowDatabaseUrl for CI/migrations if needed
 }
 
 model User {
   id        String   @id @default(cuid())
-  clerkId   String   @unique
+  clerkId   String?  @unique
   username  String   @unique
   fullName  String?
   email     String   @unique
+  avatarUrl String?
+  bio       String?
+  timezone  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  workspaces  Workspace[]
-  memberships Member[]
-  comments    Comment[]
-  mentions    Mention[]
-  Task        Task[]
+  // relations
+  workspaces    Workspace[]
+  memberships   Member[]
+  comments      Comment[]
+  mentions      Mention[]
+  tasksAssigned Task[]         @relation("AssigneeTasks")
+  documents     Document[]
+  notifications Notification[]
+  usages        Usage[]
+  subscriptions Subscription[]
+  auditLogs     AuditLog[]
+
+  Invitation Invitation[]
 }
 
 model Workspace {
-  id        String   @id @default(cuid())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   ownerId String
   owner   User     @relation(fields: [ownerId], references: [id])
   members Member[]
 
-  Task Task[]
+  projects    Project[]
+  documents   Document[]
+  attachments Attachment[]
+  Task        Task[]
+  Invitation  Invitation[]
 }
 
 model Member {
-  id          String @id @default(cuid())
-  role        String @default("member")
+  id          String   @id @default(cuid())
+  role        Role     @default(MEMBER)
   workspaceId String
   userId      String
+  createdAt   DateTime @default(now())
 
   workspace Workspace @relation(fields: [workspaceId], references: [id])
   user      User      @relation(fields: [userId], references: [id])
 }
 
-model Task {
-  id          String    @id @default(cuid())
-  title       String
+model Project {
+  id          String   @id @default(cuid())
+  workspaceId String
+  name        String
   description String?
-  status      status    @default(todo)
-  dueDate     DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  isArchived  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+  tasks     Task[]
+  // optional ordering/boards can be added later
+}
+
+model Task {
+  id           String    @id @default(cuid())
+  title        String
+  description  String?
+  status       status    @default(todo)
+  priority     Int?
+  estimateMins Int?
+  dueDate      DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   workspaceId String
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
-  assigneeId  String?
-  assignee    User?     @relation(fields: [assigneeId], references: [id])
-  Comment     Comment[]
+
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id])
+
+  assigneeId String?
+  assignee   User?   @relation("AssigneeTasks", fields: [assigneeId], references: [id])
+
+  comments    Comment[]
+  attachments Attachment[]
+  activity    AuditLog[]
 }
 
 model Comment {
@@ -74,20 +116,140 @@ model Comment {
   authorId String
   author   User   @relation(fields: [authorId], references: [id])
 
-  mentions Mention[]
+  mentions    Mention[]
+  attachments Attachment[]
 }
 
 model Mention {
-  id        String @id @default(cuid())
+  id        String   @id @default(cuid())
   userId    String
   commentId String
+  createdAt DateTime @default(now())
 
   user    User    @relation(fields: [userId], references: [id])
   comment Comment @relation(fields: [commentId], references: [id])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String // "mention" | "assignment" | "status_change" | "invite" etc.
+  title     String
+  body      String?
+  data      Json? // flexible payload (taskId, commentId, url)
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Invitation {
+  id          String    @id @default(cuid())
+  workspaceId String
+  inviterId   String
+  email       String
+  token       String    @unique
+  accepted    Boolean   @default(false)
+  acceptedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  expiresAt   DateTime?
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+  inviter   User      @relation(fields: [inviterId], references: [id])
+}
+
+model Attachment {
+  id        String   @id @default(cuid())
+  url       String
+  filename  String
+  mimeType  String?
+  size      Int?
+  createdAt DateTime @default(now())
+
+  // attached to either Task or Comment or Document (polymorphic pattern via optional fields)
+  taskId String?
+  task   Task?   @relation(fields: [taskId], references: [id])
+
+  commentId String?
+  comment   Comment? @relation(fields: [commentId], references: [id])
+
+  documentId  String?
+  document    Document?  @relation(fields: [documentId], references: [id])
+  Workspace   Workspace? @relation(fields: [workspaceId], references: [id])
+  workspaceId String?
+}
+
+model Document {
+  id          String   @id @default(cuid())
+  workspaceId String
+  title       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  workspace   Workspace    @relation(fields: [workspaceId], references: [id])
+  blocks      Block[]
+  attachments Attachment[]
+  authorId    String?
+  author      User?        @relation(fields: [authorId], references: [id])
+}
+
+model Block {
+  id         String   @id @default(cuid())
+  documentId String
+  type       String // "text", "image", "todo", "embed", etc.
+  content    Json
+  orderIndex Int
+  createdAt  DateTime @default(now())
+
+  document Document @relation(fields: [documentId], references: [id])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  action    String // "task:created", "task:status_changed", "comment:created", etc.
+  meta      Json?
+  createdAt DateTime @default(now())
+
+  actor       User?   @relation(fields: [actorId], references: [id])
+  taskId      String?
+  task        Task?   @relation(fields: [taskId], references: [id])
+  workspaceId String?
+}
+
+model Usage {
+  id        String   @id @default(cuid())
+  userId    String
+  feature   String // "ai_generate", "ai_minutes", etc.
+  amount    Int // count or seconds or tokens
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Subscription {
+  id               String    @id @default(cuid())
+  userId           String
+  provider         String // "stripe"
+  providerId       String // subscription id at provider
+  status           String
+  plan             String
+  currentPeriodEnd DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
 }
 
 enum status {
   todo
   in_progress
   done
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  MEMBER
 }
