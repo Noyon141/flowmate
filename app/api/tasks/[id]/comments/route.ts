@@ -58,3 +58,30 @@ export async function POST(
     );
   }
 }
+
+export async function GET(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  try {
+    const comments = await prisma.comment.findMany({
+      where: { taskId: id },
+      include: {
+        author: true,
+        mentions: {
+          include: {
+            user: true,
+          },
+        },
+      },
+    });
+
+    return NextResponse.json(comments, { status: 200 });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
+}

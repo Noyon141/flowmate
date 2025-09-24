@@ -13,7 +13,7 @@ export default async function WorkspaceDetailPage({
 
   const workspace = await prisma.workspace.findUnique({
     where: { id: id },
-    include: { Task: true },
+    include: { Task: true, members: true },
   });
 
   if (!workspace) return <div>Workspace not found</div>;
@@ -48,6 +48,7 @@ export default async function WorkspaceDetailPage({
             {workspace.Task.length > 0 ? (
               <div className="space-y-3">
                 <TaskList
+                  members={workspace.members}
                   initialTasks={workspace.Task}
                   workspaceId={workspace.id}
                 />

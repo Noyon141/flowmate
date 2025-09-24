@@ -1,9 +1,14 @@
 "use client";
 
+import { memberProps } from "@/types/comments";
+import { Member, status, Task } from "@prisma/client";
 import axios from "axios";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { CommentForm } from "../comments/Comment-Form";
+import { CommentList } from "../comments/Comment-List";
 import { Card, CardContent } from "../ui/card";
 import {
   Select,
@@ -13,21 +18,23 @@ import {
   SelectValue,
 } from "../ui/select";
 
+type TaskItemProps = Task & {
+  workspaceId: string;
+  members: Member[];
+};
+
 export function TaskItem({
   id,
   title,
   description,
   status,
-}: {
-  id: string;
-  title: string;
-  description?: string | null;
-  status: string;
-}) {
+  members,
+}: TaskItemProps) {
   const [current, setCurrent] = useState(status);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [showComments, setShowComments] = useState(false);
 
-  const updateStatus = async (newStatus: string) => {
+  const updateStatus = async (newStatus: status) => {
     setIsUpdating(true);
     try {
       const response = await axios.patch(`/api/tasks/${id}`, {
@@ -107,8 +114,33 @@ export function TaskItem({
                 </SelectContent>
               </Select>
             </div>
+            <button
+              onClick={() => setShowComments(!showComments)}
+              className="text-sm text-blue-500 flex items-center gap-1"
+            >
+              {showComments ? (
+                <ChevronUp size={16} />
+              ) : (
+                <ChevronDown size={16} />
+              )}
+              Comments
+            </button>
           </div>
         </CardContent>
+        <AnimatePresence>
+          {showComments && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mt-3 space-y-2"
+            >
+              {/* Comments section */}
+              <CommentList id={id} />
+              <CommentForm id={id} members={members} />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </Card>
     </motion.div>
   );

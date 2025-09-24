@@ -1,23 +1,21 @@
 "use client";
 
 import { pusherClient } from "@/lib/pusher";
+import { Member, Task } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { TaskItem } from "./Task-Item";
 
-interface initialTasks {
-  id: string;
-  title: string;
-  description?: string | null;
-  status: string;
-}
+type TaskListProps = {
+  initialTasks: Task[];
+  workspaceId: string;
+  members: Member[];
+};
 export function TaskList({
   initialTasks,
   workspaceId,
-}: {
-  initialTasks: initialTasks[];
-  workspaceId: string;
-}) {
+  members,
+}: TaskListProps) {
   const [tasks, setTasks] = useState(initialTasks);
 
   useEffect(() => {
@@ -81,7 +79,12 @@ export function TaskList({
     <ul className="space-y-2">
       {tasks.map((task) => (
         <li key={task.id} data-task-id={task.id}>
-          <TaskItem {...task} />
+          <TaskItem
+            {...task}
+            key={task.id}
+            workspaceId={workspaceId}
+            members={members}
+          />
         </li>
       ))}
     </ul>
